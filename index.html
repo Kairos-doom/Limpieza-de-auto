@@ -280,7 +280,7 @@
         box-shadow: 0 8px 20px rgba(164, 214, 44, 0.12);
       }
 
-      /* Estilos para el Carrusel de Fotos (hasta 5) */
+      /* Carrusel de fotos */
       .carousel-container {
         position: relative;
         width: 100%;
@@ -317,7 +317,6 @@
         justify-content: center;
         cursor: pointer;
         z-index: 5;
-        transition: background 0.2s;
       }
 
       .carousel-btn:hover {
@@ -344,7 +343,6 @@
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.4);
         cursor: pointer;
-        transition: background 0.2s;
       }
 
       .dot.active {
@@ -420,7 +418,6 @@
         font-size: 2rem;
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
         z-index: 999;
-        transition: transform 0.3s ease;
         text-decoration: none;
       }
 
@@ -519,10 +516,6 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       }
 
-      .admin-item:last-child {
-        border-bottom: none;
-      }
-
       .admin-item-info {
         display: flex;
         align-items: center;
@@ -597,7 +590,6 @@
         font-weight: 600;
         cursor: pointer;
         margin: 0.3rem;
-        transition: all 0.2s ease;
       }
 
       footer button:hover {
@@ -712,10 +704,6 @@
         <div id="admin-panel-sec" style="display: none">
           <h3>Datos del Taller</h3>
           <div class="form-group">
-            <label>URL del Logo (Opcional):</label>
-            <input type="text" id="input-store-logo" placeholder="https://..." />
-          </div>
-          <div class="form-group">
             <label>Subtítulo / Especialidades:</label>
             <input type="text" id="input-store-subtitle" />
           </div>
@@ -750,7 +738,7 @@
 
           <hr style="border-color: var(--border-lime); margin: 1.5rem 0" />
 
-          <h3 id="form-service-title">Agregar / Editar Servicio (Hasta 5 Fotos)</h3>
+          <h3 id="form-service-title">Agregar / Editar Servicio (Subir hasta 5 Fotos)</h3>
           <form
             id="form-service"
             onsubmit="event.preventDefault(); saveService();"
@@ -765,26 +753,26 @@
               <select id="srv-category"></select>
             </div>
             
-            <!-- CAMPOS PARA HASTA 5 FOTOS -->
+            <!-- SELECTORES DE ARCHIVOS DIRECTOS DE LA PC / CELULAR (HASTA 5) -->
             <div class="form-group">
-              <label>Foto 1 (Principal - Requerida):</label>
-              <input type="text" id="srv-img-1" placeholder="https://..." required />
+              <label>Foto 1 (Principal):</label>
+              <input type="file" id="srv-file-1" accept="image/*" />
             </div>
             <div class="form-group">
               <label>Foto 2 (Opcional):</label>
-              <input type="text" id="srv-img-2" placeholder="https://..." />
+              <input type="file" id="srv-file-2" accept="image/*" />
             </div>
             <div class="form-group">
               <label>Foto 3 (Opcional):</label>
-              <input type="text" id="srv-img-3" placeholder="https://..." />
+              <input type="file" id="srv-file-3" accept="image/*" />
             </div>
             <div class="form-group">
               <label>Foto 4 (Opcional):</label>
-              <input type="text" id="srv-img-4" placeholder="https://..." />
+              <input type="file" id="srv-file-4" accept="image/*" />
             </div>
             <div class="form-group">
               <label>Foto 5 (Opcional):</label>
-              <input type="text" id="srv-img-5" placeholder="https://..." />
+              <input type="file" id="srv-file-5" accept="image/*" />
             </div>
 
             <div class="form-group">
@@ -847,44 +835,10 @@
           'PRODUCTOS DE ESTÉTICA'
         ];
 
-        let services = [
-          {
-            id: 1,
-            name: 'Lavado Premium al Detalle',
-            category: 'LAVADO Y INTERIOR',
-            images: [
-              'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80',
-              'https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800&q=80'
-            ],
-            description: 'Lavado exterior seguro con técnica de dos baldes, descontaminado férrico, limpieza profunda de llantas y pasarruedas.'
-          },
-          {
-            id: 2,
-            name: 'Pulido y Corrección de Barniz',
-            category: 'PULIDOS Y TRATAMIENTOS',
-            images: [
-              'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=800&q=80',
-              'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=800&q=80'
-            ],
-            description: 'Eliminación de marcas de lavado (swirls) y rayas superficiales para devolver el brillo espejo al color original.'
-          }
-        ];
-
+        let services = [];
         let currentCategory = 'Todos';
 
         function updateUI() {
-          const logoImg = document.getElementById('store-logo-img');
-          const textWrapper = document.getElementById('brand-text-wrapper');
-          
-          if (settings.logo && settings.logo.trim() !== '') {
-            logoImg.src = settings.logo;
-            logoImg.style.display = 'block';
-            textWrapper.style.display = 'none';
-          } else {
-            logoImg.style.display = 'none';
-            textWrapper.style.display = 'block';
-          }
-
           document.getElementById('store-subtitle').innerText = settings.subtitle;
           document.getElementById('footer-address').innerText = settings.address;
           document.getElementById('footer-phone').innerText = '+' + settings.whatsapp;
@@ -982,21 +936,16 @@
           window.open(`https://wa.me/${cleanWs}?text=${msg}`, '_blank');
         });
 
-        // Funciones del Carrusel deslizante de fotos
         window.moveSlide = function(cardId, direction, totalSlides) {
           const track = document.getElementById(`track-${cardId}`);
           if (!track) return;
-          
           let currentIdx = parseInt(track.getAttribute('data-index') || '0');
           currentIdx += direction;
-
           if (currentIdx < 0) currentIdx = totalSlides - 1;
           if (currentIdx >= totalSlides) currentIdx = 0;
-
           track.setAttribute('data-index', currentIdx);
           track.style.transform = `translateX(-${currentIdx * 100}%)`;
 
-          // Actualizar puntos activos
           const dotsContainer = document.getElementById(`dots-${cardId}`);
           if (dotsContainer) {
             Array.from(dotsContainer.children).forEach((dot, idx) => {
@@ -1008,7 +957,6 @@
         window.goToSlide = function(cardId, slideIdx) {
           const track = document.getElementById(`track-${cardId}`);
           if (!track) return;
-
           track.setAttribute('data-index', slideIdx);
           track.style.transform = `translateX(-${slideIdx * 100}%)`;
 
@@ -1046,7 +994,6 @@
               );
               const wsLink = `https://wa.me/${cleanWs}?text=${message}`;
 
-              // Normalizar imágenes (asegurar que sea array)
               let imgList = [];
               if (Array.isArray(s.images) && s.images.length > 0) {
                 imgList = s.images.filter(img => img && img.trim() !== '');
@@ -1055,7 +1002,6 @@
               }
               if (imgList.length === 0) imgList = ['https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80'];
 
-              // Construir HTML del carrusel
               let slidesHTML = '';
               let dotsHTML = '';
               imgList.forEach((imgUrl, idx) => {
@@ -1137,16 +1083,12 @@
           document.getElementById('srv-category').value = srv.category;
           document.getElementById('srv-desc').value = srv.description || '';
 
-          // Rellenar hasta 5 inputs de fotos
-          let imgs = Array.isArray(srv.images) ? srv.images : [srv.image];
+          // Limpiar inputs de archivos al editar
           for (let i = 1; i <= 5; i++) {
-            const inputField = document.getElementById(`srv-img-${i}`);
-            if (inputField) {
-              inputField.value = imgs[i - 1] || '';
-            }
+            document.getElementById(`srv-file-${i}`).value = '';
           }
 
-          document.getElementById('form-service-title').innerText = 'Modificar Servicio';
+          document.getElementById('form-service-title').innerText = 'Modificar Servicio (Sube nuevas fotos si deseas cambiarlas)';
           document.getElementById('btn-save-service').innerText = 'Actualizar Servicio';
           document.getElementById('btn-cancel-edit').style.display = 'block';
         };
@@ -1176,11 +1118,10 @@
           document.getElementById('srv-name').value = '';
           document.getElementById('srv-desc').value = '';
           for (let i = 1; i <= 5; i++) {
-            const inputField = document.getElementById(`srv-img-${i}`);
-            if (inputField) inputField.value = '';
+            document.getElementById(`srv-file-${i}`).value = '';
           }
 
-          document.getElementById('form-service-title').innerText = 'Agregar / Editar Servicio (Hasta 5 Fotos)';
+          document.getElementById('form-service-title').innerText = 'Agregar / Editar Servicio (Subir hasta 5 Fotos)';
           document.getElementById('btn-save-service').innerText = 'Guardar Servicio';
           document.getElementById('btn-cancel-edit').style.display = 'none';
         }
@@ -1202,7 +1143,6 @@
             document.getElementById('admin-login-sec').style.display = 'none';
             document.getElementById('admin-panel-sec').style.display = 'block';
 
-            document.getElementById('input-store-logo').value = settings.logo || '';
             document.getElementById('input-store-subtitle').value = settings.subtitle;
             document.getElementById('input-store-address').value = settings.address;
             document.getElementById('input-store-ws').value = settings.whatsapp;
@@ -1217,7 +1157,6 @@
           if (supabaseClient) {
             await supabaseClient.from('store_settings').upsert({
               id: 'default',
-              logo: settings.logo,
               subtitle: settings.subtitle,
               address: settings.address,
               whatsapp: settings.whatsapp,
@@ -1230,7 +1169,6 @@
         }
 
         document.getElementById('btn-save-settings').addEventListener('click', async () => {
-          settings.logo = document.getElementById('input-store-logo').value;
           settings.subtitle = document.getElementById('input-store-subtitle').value;
           settings.address = document.getElementById('input-store-address').value;
           settings.whatsapp = document.getElementById('input-store-ws').value;
@@ -1249,15 +1187,56 @@
           const category = document.getElementById('srv-category').value;
           const description = document.getElementById('srv-desc').value;
 
-          // Recopilar hasta 5 fotos ingresadas
-          let imagesArr = [];
-          for (let i = 1; i <= 5; i++) {
-            const val = document.getElementById(`srv-img-${i}`).value.trim();
-            if (val) imagesArr.push(val);
+          if (!name || !description) {
+            alert('Completa el nombre y la descripción.');
+            return;
           }
 
-          if (!name || imagesArr.length === 0 || !description) {
-            alert('Completa el nombre, al menos la Foto 1 y la descripción.');
+          // Subir archivos seleccionados a Supabase Storage
+          let finalImages = [];
+          if (editId) {
+            const existingSrv = services.find(s => String(s.id) === String(editId));
+            if (existingSrv && Array.isArray(existingSrv.images)) {
+              finalImages = [...existingSrv.images];
+            }
+          }
+
+          for (let i = 1; i <= 5; i++) {
+            const fileInput = document.getElementById(`srv-file-${i}`);
+            if (fileInput && fileInput.files.length > 0) {
+              const file = fileInput.files[0];
+              const fileExt = file.name.split('.').pop();
+              const fileName = `${Date.now()}_${i}.${fileExt}`;
+              const filePath = `servicios/${fileName}`;
+
+              if (supabaseClient) {
+                const { error: uploadError } = await supabaseClient.storage
+                  .from('servicios-fotos')
+                  .upload(filePath, file);
+
+                if (uploadError) {
+                  alert('Error al subir la imagen ' + i + ': ' + uploadError.message);
+                  return;
+                }
+
+                // Obtener URL pública de la imagen subida
+                const { data: publicURLData } = supabaseClient.storage
+                  .from('servicios-fotos')
+                  .getPublicUrl(filePath);
+
+                if (publicURLData && publicURLData.publicUrl) {
+                  if (editId && finalImages[i - 1]) {
+                    finalImages[i - 1] = publicURLData.publicUrl; // Reemplazar si ya existía
+                  } else {
+                    finalImages.push(publicURLData.publicUrl); // Agregar nueva
+                  }
+                }
+              }
+            }
+          }
+
+          if (finalImages.length === 0) {
+            alert('Debes seleccionar al menos una foto.');
             return;
           }
 
@@ -1265,16 +1244,11 @@
             if (supabaseClient) {
               const { error } = await supabaseClient
                 .from('services')
-                .update({ name, category, images: imagesArr, description })
+                .update({ name, category, images: finalImages, description })
                 .eq('id', editId);
               if (error) {
                 alert('Error al actualizar: ' + error.message);
                 return;
-              }
-            } else {
-              const index = services.findIndex((s) => String(s.id) === String(editId));
-              if (index !== -1) {
-                services[index] = { id: editId, name, category, images: imagesArr, description };
               }
             }
             alert('¡Servicio actualizado!');
@@ -1282,24 +1256,17 @@
             if (supabaseClient) {
               const { error } = await supabaseClient
                 .from('services')
-                .insert([{ name, category, images: imagesArr, description }]);
+                .insert([{ name, category, images: finalImages, description }]);
               if (error) {
                 alert('Error al guardar: ' + error.message);
                 return;
               }
-            } else {
-              const newId = services.length > 0 ? Math.max(...services.map(s => Number(s.id))) + 1 : 1;
-              services.push({ id: newId, name, category, images: imagesArr, description });
             }
             alert('¡Servicio agregado!');
           }
 
           resetForm();
-          if (supabaseClient) {
-            syncSupabase();
-          } else {
-            renderServices();
-          }
+          syncSupabase();
         };
 
         document.getElementById('search-input').addEventListener('input', renderServices);

@@ -280,11 +280,77 @@
         box-shadow: 0 8px 20px rgba(164, 214, 44, 0.12);
       }
 
-      .service-img {
+      /* Estilos para el Carrusel de Fotos (hasta 5) */
+      .carousel-container {
+        position: relative;
         width: 100%;
         height: 210px;
-        object-fit: cover;
         background: #25292c;
+        overflow: hidden;
+      }
+
+      .carousel-track {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .carousel-slide {
+        min-width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.6);
+        color: var(--primary-lime);
+        border: 1px solid var(--border-lime);
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 5;
+        transition: background 0.2s;
+      }
+
+      .carousel-btn:hover {
+        background: var(--primary-lime);
+        color: #111314;
+      }
+
+      .carousel-prev { left: 8px; }
+      .carousel-next { right: 8px; }
+
+      .carousel-dots {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 5px;
+        z-index: 5;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.4);
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .dot.active {
+        background: var(--primary-lime);
+        width: 18px;
+        border-radius: 4px;
       }
 
       .service-info {
@@ -563,7 +629,6 @@
       </div>
     </header>
 
-    <!-- Barra de Ventajas / Beneficios -->
     <div class="features-bar">
       <div class="features-container">
         <div class="feature-item">
@@ -597,7 +662,6 @@
       <div class="services-grid" id="services-container"></div>
     </div>
 
-    <!-- Botón flotante de WhatsApp -->
     <a href="#" id="float-whatsapp" class="whatsapp-float" target="_blank" title="Consultar por WhatsApp">
       <i class="fa-brands fa-whatsapp"></i>
     </a>
@@ -686,7 +750,7 @@
 
           <hr style="border-color: var(--border-lime); margin: 1.5rem 0" />
 
-          <h3 id="form-service-title">Agregar / Editar Servicio</h3>
+          <h3 id="form-service-title">Agregar / Editar Servicio (Hasta 5 Fotos)</h3>
           <form
             id="form-service"
             onsubmit="event.preventDefault(); saveService();"
@@ -700,15 +764,29 @@
               <label>Categoría:</label>
               <select id="srv-category"></select>
             </div>
+            
+            <!-- CAMPOS PARA HASTA 5 FOTOS -->
             <div class="form-group">
-              <label>URL Foto de Muestra:</label>
-              <input
-                type="text"
-                id="srv-img"
-                placeholder="https://ejemplo.com/foto.jpg"
-                required
-              />
+              <label>Foto 1 (Principal - Requerida):</label>
+              <input type="text" id="srv-img-1" placeholder="https://..." required />
             </div>
+            <div class="form-group">
+              <label>Foto 2 (Opcional):</label>
+              <input type="text" id="srv-img-2" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+              <label>Foto 3 (Opcional):</label>
+              <input type="text" id="srv-img-3" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+              <label>Foto 4 (Opcional):</label>
+              <input type="text" id="srv-img-4" placeholder="https://..." />
+            </div>
+            <div class="form-group">
+              <label>Foto 5 (Opcional):</label>
+              <input type="text" id="srv-img-5" placeholder="https://..." />
+            </div>
+
             <div class="form-group">
               <label>Descripción del Trabajo:</label>
               <textarea id="srv-desc" rows="3" required></textarea>
@@ -774,57 +852,21 @@
             id: 1,
             name: 'Lavado Premium al Detalle',
             category: 'LAVADO Y INTERIOR',
-            image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80',
-            description: 'Lavado exterior seguro con técnica de dos baldes, descontaminado férrico, limpieza profunda de llantas, pasarruedas y acondicionamiento de cubiertas.'
+            images: [
+              'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80',
+              'https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800&q=80'
+            ],
+            description: 'Lavado exterior seguro con técnica de dos baldes, descontaminado férrico, limpieza profunda de llantas y pasarruedas.'
           },
           {
             id: 2,
-            name: 'Limpieza de Interior Profunda',
-            category: 'LAVADO Y INTERIOR',
-            image: 'https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800&q=80',
-            description: 'Limpieza y desinfección de tapizados (tela o cuero), alfombras, techo, paneles de puertas y nutrición de plásticos con acabado mate original.'
-          },
-          {
-            id: 3,
             name: 'Pulido y Corrección de Barniz',
             category: 'PULIDOS Y TRATAMIENTOS',
-            image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=800&q=80',
-            description: 'Eliminación de marcas de lavado (swirls), rayas superficiales y hologramas para devolver el brillo espejo y profundidad al color original del vehículo.'
-          },
-          {
-            id: 4,
-            name: 'Tratamientos Cerámicos y Acrílicos',
-            category: 'PULIDOS Y TRATAMIENTOS',
-            image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=800&q=80',
-            description: 'Protección de larga duración contra rayos UV, lluvia ácida y suciedad, otorgando extrema repelencia al agua (hidrofobia) y brillo intenso.'
-          },
-          {
-            id: 5,
-            name: 'Instalación de PPF (Paint Protection Film)',
-            category: 'PPF Y PLOTEO',
-            image: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=800&q=80',
-            description: 'Película transparente de poliuretano autorregenerativa para proteger la pintura contra piedrazos, roces y rayones en zonas críticas o vehículo completo.'
-          },
-          {
-            id: 6,
-            name: 'Ploteo Vehicular Personalizado',
-            category: 'PPF Y PLOTEO',
-            image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80',
-            description: 'Cambio de color completo o parcial (techos, espejos, detalles deportivos) con vinilos automotrices de primera calidad y terminaciones invisibles.'
-          },
-          {
-            id: 7,
-            name: 'Polarizados Automotrices',
-            category: 'POLARIZADOS',
-            image: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80',
-            description: 'Instalación de láminas de control solar y seguridad en distintas tonalidades, rechazando rayos UV y mejorando el confort térmico interior.'
-          },
-          {
-            id: 8,
-            name: 'Venta de Productos de Estética Vehicular',
-            category: 'PRODUCTOS DE ESTÉTICA',
-            image: 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=800&q=80',
-            description: 'Asesoramiento y venta de insumos profesionales para el mantenimiento y lavado de tu vehículo en casa: shampoos, ceras, microfibras y acondicionadores.'
+            images: [
+              'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=800&q=80',
+              'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=800&q=80'
+            ],
+            description: 'Eliminación de marcas de lavado (swirls) y rayas superficiales para devolver el brillo espejo al color original.'
           }
         ];
 
@@ -940,6 +982,44 @@
           window.open(`https://wa.me/${cleanWs}?text=${msg}`, '_blank');
         });
 
+        // Funciones del Carrusel deslizante de fotos
+        window.moveSlide = function(cardId, direction, totalSlides) {
+          const track = document.getElementById(`track-${cardId}`);
+          if (!track) return;
+          
+          let currentIdx = parseInt(track.getAttribute('data-index') || '0');
+          currentIdx += direction;
+
+          if (currentIdx < 0) currentIdx = totalSlides - 1;
+          if (currentIdx >= totalSlides) currentIdx = 0;
+
+          track.setAttribute('data-index', currentIdx);
+          track.style.transform = `translateX(-${currentIdx * 100}%)`;
+
+          // Actualizar puntos activos
+          const dotsContainer = document.getElementById(`dots-${cardId}`);
+          if (dotsContainer) {
+            Array.from(dotsContainer.children).forEach((dot, idx) => {
+              dot.className = idx === currentIdx ? 'dot active' : 'dot';
+            });
+          }
+        };
+
+        window.goToSlide = function(cardId, slideIdx) {
+          const track = document.getElementById(`track-${cardId}`);
+          if (!track) return;
+
+          track.setAttribute('data-index', slideIdx);
+          track.style.transform = `translateX(-${slideIdx * 100}%)`;
+
+          const dotsContainer = document.getElementById(`dots-${cardId}`);
+          if (dotsContainer) {
+            Array.from(dotsContainer.children).forEach((dot, idx) => {
+              dot.className = idx === slideIdx ? 'dot active' : 'dot';
+            });
+          }
+        };
+
         function renderServices() {
           const container = document.getElementById('services-container');
           const searchInput = document.getElementById('search-input');
@@ -966,9 +1046,40 @@
               );
               const wsLink = `https://wa.me/${cleanWs}?text=${message}`;
 
+              // Normalizar imágenes (asegurar que sea array)
+              let imgList = [];
+              if (Array.isArray(s.images) && s.images.length > 0) {
+                imgList = s.images.filter(img => img && img.trim() !== '');
+              } else if (s.image) {
+                imgList = [s.image];
+              }
+              if (imgList.length === 0) imgList = ['https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80'];
+
+              // Construir HTML del carrusel
+              let slidesHTML = '';
+              let dotsHTML = '';
+              imgList.forEach((imgUrl, idx) => {
+                slidesHTML += `<img src="${imgUrl}" class="carousel-slide" alt="${s.name} foto ${idx + 1}">`;
+                dotsHTML += `<span class="dot ${idx === 0 ? 'active' : ''}" onclick="goToSlide('${s.id}', ${idx})"></span>`;
+              });
+
+              let arrowsHTML = '';
+              if (imgList.length > 1) {
+                arrowsHTML = `
+                  <button class="carousel-btn carousel-prev" onclick="moveSlide('${s.id}', -1, ${imgList.length})"><i class="fa-solid fa-chevron-left"></i></button>
+                  <button class="carousel-btn carousel-next" onclick="moveSlide('${s.id}', 1, ${imgList.length})"><i class="fa-solid fa-chevron-right"></i></button>
+                  <div class="carousel-dots" id="dots-${s.id}">${dotsHTML}</div>
+                `;
+              }
+
               container.innerHTML += `
                 <div class="service-card">
-                  <img src="${s.image}" class="service-img" alt="${s.name}">
+                  <div class="carousel-container">
+                    <div class="carousel-track" id="track-${s.id}" data-index="0">
+                      ${slidesHTML}
+                    </div>
+                    ${arrowsHTML}
+                  </div>
                   <div class="service-info">
                     <div class="service-category">${s.category}</div>
                     <div class="service-title">${s.name}</div>
@@ -996,13 +1107,16 @@
           }
 
           services.forEach((s) => {
+            let firstImg = (Array.isArray(s.images) && s.images.length > 0) ? s.images[0] : (s.image || '');
+            let countImgs = (Array.isArray(s.images)) ? s.images.length : 1;
+
             adminList.innerHTML += `
               <div class="admin-item">
                 <div class="admin-item-info">
-                  <img src="${s.image}" class="admin-item-img" alt="${s.name}">
+                  <img src="${firstImg}" class="admin-item-img" alt="${s.name}">
                   <div>
                     <strong style="color: #fff; font-size: 0.85rem;">${s.name}</strong><br>
-                    <small style="color: var(--primary-lime);">${s.category}</small>
+                    <small style="color: var(--primary-lime);">${s.category} (${countImgs} foto/s)</small>
                   </div>
                 </div>
                 <div class="admin-actions">
@@ -1021,8 +1135,16 @@
           document.getElementById('srv-id-edit').value = srv.id;
           document.getElementById('srv-name').value = srv.name;
           document.getElementById('srv-category').value = srv.category;
-          document.getElementById('srv-img').value = srv.image;
           document.getElementById('srv-desc').value = srv.description || '';
+
+          // Rellenar hasta 5 inputs de fotos
+          let imgs = Array.isArray(srv.images) ? srv.images : [srv.image];
+          for (let i = 1; i <= 5; i++) {
+            const inputField = document.getElementById(`srv-img-${i}`);
+            if (inputField) {
+              inputField.value = imgs[i - 1] || '';
+            }
+          }
 
           document.getElementById('form-service-title').innerText = 'Modificar Servicio';
           document.getElementById('btn-save-service').innerText = 'Actualizar Servicio';
@@ -1052,10 +1174,13 @@
         function resetForm() {
           document.getElementById('srv-id-edit').value = '';
           document.getElementById('srv-name').value = '';
-          document.getElementById('srv-img').value = '';
           document.getElementById('srv-desc').value = '';
+          for (let i = 1; i <= 5; i++) {
+            const inputField = document.getElementById(`srv-img-${i}`);
+            if (inputField) inputField.value = '';
+          }
 
-          document.getElementById('form-service-title').innerText = 'Agregar / Editar Servicio';
+          document.getElementById('form-service-title').innerText = 'Agregar / Editar Servicio (Hasta 5 Fotos)';
           document.getElementById('btn-save-service').innerText = 'Guardar Servicio';
           document.getElementById('btn-cancel-edit').style.display = 'none';
         }
@@ -1122,11 +1247,17 @@
           const editId = document.getElementById('srv-id-edit').value;
           const name = document.getElementById('srv-name').value;
           const category = document.getElementById('srv-category').value;
-          const image = document.getElementById('srv-img').value;
           const description = document.getElementById('srv-desc').value;
 
-          if (!name || !image || !description) {
-            alert('Completa todos los campos del servicio.');
+          // Recopilar hasta 5 fotos ingresadas
+          let imagesArr = [];
+          for (let i = 1; i <= 5; i++) {
+            const val = document.getElementById(`srv-img-${i}`).value.trim();
+            if (val) imagesArr.push(val);
+          }
+
+          if (!name || imagesArr.length === 0 || !description) {
+            alert('Completa el nombre, al menos la Foto 1 y la descripción.');
             return;
           }
 
@@ -1134,7 +1265,7 @@
             if (supabaseClient) {
               const { error } = await supabaseClient
                 .from('services')
-                .update({ name, category, image, description })
+                .update({ name, category, images: imagesArr, description })
                 .eq('id', editId);
               if (error) {
                 alert('Error al actualizar: ' + error.message);
@@ -1143,7 +1274,7 @@
             } else {
               const index = services.findIndex((s) => String(s.id) === String(editId));
               if (index !== -1) {
-                services[index] = { id: editId, name, category, image, description };
+                services[index] = { id: editId, name, category, images: imagesArr, description };
               }
             }
             alert('¡Servicio actualizado!');
@@ -1151,14 +1282,14 @@
             if (supabaseClient) {
               const { error } = await supabaseClient
                 .from('services')
-                .insert([{ name, category, image, description }]);
+                .insert([{ name, category, images: imagesArr, description }]);
               if (error) {
                 alert('Error al guardar: ' + error.message);
                 return;
               }
             } else {
               const newId = services.length > 0 ? Math.max(...services.map(s => Number(s.id))) + 1 : 1;
-              services.push({ id: newId, name, category, image, description });
+              services.push({ id: newId, name, category, images: imagesArr, description });
             }
             alert('¡Servicio agregado!');
           }
@@ -1196,7 +1327,9 @@
                 .select('*')
                 .order('id', { ascending: true });
 
-              if (srvData && srvData.length > 0) services = srvData;
+              if (srvData && srvData.length > 0) {
+                services = srvData;
+              }
             } catch (e) {
               console.warn('Error al sincronizar Supabase:', e);
             }

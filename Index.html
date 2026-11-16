@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="doc-title">MONSDETAIL Shop | Estética Vehicular Profesional</title>
+
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Supabase JS Client v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+      :root {
+        --primary-lime: #a4d62c;
+        --secondary-lime: #82ad1f;
+        --dark-bg: #111314;
+        --card-bg: #1b1e20;
+        --text-main: #f5f5f5;
+        --text-muted: #9da3a8;
+        --white: #ffffff;
+        --border-lime: rgba(164, 214, 44, 0.3);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Montserrat', sans-serif;
+      }
+
+      body {
+        background-color: var(--dark-bg);
+        color: var(--text-main);
+        line-height: 1.6;
+      }
+
+      header {
+        background: linear-gradient(135deg, #0d0e0f 0%, #1d2022 100%);
+        border-bottom: 3px solid var(--primary-lime);
+        padding: 2.5rem 1rem;
+        text-align: center;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .brand-logo-text {
+        font-size: 2.8rem;
+        font-weight: 900;
+        font-style: italic;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        line-height: 1;
+        margin-bottom: 0.2rem;
+      }
+
+      .brand-logo-text .mons {
+        color: var(--text-muted);
+      }
+
+      .brand-logo-text .detail {
+        color: var(--primary-lime);
+      }
+
+      .brand-shop-sub {
+        font-size: 1.3rem;
+        font-weight: 600;
+        font-style: italic;
+        color: var(--white);
+        letter-spacing: 2px;
+        margin-bottom: 0.8rem;
+        display: inline-block;
+        border-top: 2px solid var(--primary-lime);
+        padding-top: 2px;
+      }
+
+      .brand-logo-img {
+        max-width: 280px;
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        margin-bottom: 0.5rem;
+        display: none;
+      }
+
+      .brand-subtitle {
+        color: var(--text-muted);
+        font-size: 1.05rem;
+        font-weight: 400;
+        max-width: 700px;
+      }
+
+      .owner-badge {
+        margin-top: 0.8rem;
+        background: rgba(164, 214, 44, 0.12);
+        border: 1px solid var(--border-lime);
+        color: var(--primary-lime);
+        padding: 0.35rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .admin-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: transparent;
+        border: 1px solid var(--border-lime);
+        color: var(--primary-lime);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        z-index: 10;
+        font-size: 0.85rem;
+      }
+
+      .admin-btn:hover {
+        background: var(--primary-lime);
+        color: #111314;
+        font-weight: 600;
+      }
+
+      .features-bar {
+        background: #17191b;
+        border-bottom: 1px solid rgba(164, 214, 44, 0.15);
+        padding: 1.2rem 1rem;
+      }
+
+      .features-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        text-align: center;
+      }
+
+      .feature-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--white);
+      }
+
+      .feature-item i {
+        color: var(--primary-lime);
+        font-size: 1.3rem;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--white);
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .section-desc {
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .search-bar {
+        position: relative;
+        width: 100%;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 0.85rem 1rem 0.85rem 2.6rem;
+        background: var(--card-bg);
+        border: 1px solid var(--border-lime);
+        border-radius: 8px;
+        color: var(--text-main);
+        font-size: 0.95rem;
+      }
+
+      .search-bar input:focus {
+        outline: none;
+        border-color: var(--primary-lime);
+      }
+
+      .search-bar i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-lime);
+      }
+
+      .filter-tags {
+        display: flex;
+        gap: 0.6rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        white-space: nowrap;
+      }
+
+      .filter-tags::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .filter-tags::-webkit-scrollbar-thumb {
+        background: var(--primary-lime);
+        border-radius: 3px;
+      }
+
+      .tag-btn {
+        background: var(--card-bg);
+        border: 1px solid var(--border-lime);
+        color: var(--text-main);
+        padding: 0.5rem 1.1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+      }
+
+      .tag-btn:hover {
+        border-color: var(--primary-lime);
+      }
+
+      .tag-btn.active {
+        background: var(--primary-lime);
+        color: #111314;
+        font-weight: 700;
+      }
+
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .service-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-lime);
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(164, 214, 44, 0.12);
+      }
+
+      .service-img {
+        width: 100%;
+        height: 210px;
+        object-fit: cover;
+        background: #25292c;
+      }
+
+      .service-info {
+        padding: 1.4rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      .service-category {
+        font-size: 0.75rem;
+        color: var(--primary-lime);
+        font-weight: 700;
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .service-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+        color: var(--white);
+      }
+
+      .service-desc {
+        color: var(--text-muted);
+        font-size: 0.92rem;
+        margin-bottom: 1.4rem;
+        flex: 1;
+      }
+
+      .quote-btn {
+        width: 100%;
+        background: var(--primary-lime);
+        color: #111314;
+        border: none;
+        padding: 0.85rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: background 0.2s ease;
+      }
+
+      .quote-btn:hover {
+        background: var(--secondary-lime);
+        color: #fff;
+      }
+
+      .whatsapp-float {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background-color: #25d366;
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        z-index: 999;
+        transition: transform 0.3s ease;
+        text-decoration: none;
+      }
+
+      .whatsapp-float:hover {
+        transform: scale(1.1);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.88);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        padding: 1rem;
+      }
+
+      .modal.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: var(--card-bg);
+        border: 1px solid var(--primary-lime);
+        padding: 2rem;
+        border-radius: 12px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 1.8rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.2rem;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.4rem;
+        color: var(--primary-lime);
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        padding: 0.8rem;
+        background: #111314;
+        border: 1px solid var(--border-lime);
+        color: white;
+        border-radius: 6px;
+      }
+
+      .submit-btn {
+        width: 100%;
+        background: var(--primary-lime);
+        color: #111314;
+        font-weight: 700;
+        padding: 0.85rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      .admin-list {
+        margin-top: 1rem;
+        max-height: 220px;
+        overflow-y: auto;
+        border: 1px solid var(--border-lime);
+        border-radius: 6px;
+        padding: 0.5rem;
+        background: #111314;
+      }
+
+      .admin-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .admin-item:last-child {
+        border-bottom: none;
+      }
+
+      .admin-item-info {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+
+      .admin-item-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+
+      .admin-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .btn-edit-sm {
+        background: var(--primary-lime);
+        color: #111314;
+        border: none;
+        padding: 0.4rem 0.7rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.8rem;
+      }
+
+      .btn-delete-sm {
+        background: #e74c3c;
+        color: #fff;
+        border: none;
+        padding: 0.4rem 0.7rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.8rem;
+      }
+
+      footer {
+        background: #0d0e0f;
+        text-align: center;
+        padding: 2.5rem 1rem;
+        margin-top: 4rem;
+        border-top: 2px solid var(--primary-lime);
+        color: var(--text-muted);
+      }
+
+      .footer-contact-info {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 1.2rem;
+        font-size: 0.95rem;
+        color: var(--white);
+      }
+
+      .footer-contact-info span i {
+        color: var(--primary-lime);
+        margin-right: 0.4rem;
+      }
+
+      footer button {
+        background: rgba(164, 214, 44, 0.1);
+        border: 1px solid var(--border-lime);
+        color: var(--primary-lime);
+        padding: 0.5rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        margin: 0.3rem;
+        transition: all 0.2s ease;
+      }
+
+      footer button:hover {
+        background: var(--primary-lime);
+        color: #111314;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <button class="admin-btn" id="btn-admin-modal">
+        <i class="fa-solid fa-gear"></i> Panel Admin
+      </button>
+
+      <img src="" alt="MONSDETAIL Shop" class="brand-logo-img" id="store-logo-img" />
+
+      <div id="brand-text-wrapper">
+        <h1 class="brand-logo-text">
+          <span class="mons">MONS</span><span class="detail">DETAIL</span>
+        </h1>
+        <div class="brand-shop-sub">Shop</div>
+      </div>
+
+      <p class="brand-subtitle" id="store-subtitle">
+        Lavado Premium • Limpieza de Interior • Tratamientos Cerámicos • PPF • Ploteo Vehicular
+      </p>
+      <div class="owner-badge" id="store-owner">
+        <i class="fa-solid fa-user-check"></i> Daniel Barcala
+      </div>
+    </header>
+
+    <!-- Barra de Ventajas / Beneficios -->
+    <div class="features-bar">
+      <div class="features-container">
+        <div class="feature-item">
+          <i class="fa-solid fa-shield-halved"></i> Productos de Alta Gama
+        </div>
+        <div class="feature-item">
+          <i class="fa-solid fa-car-burst"></i> Protección y Cuidado Total
+        </div>
+        <div class="feature-item">
+          <i class="fa-solid fa-handshake"></i> Asesoramiento Personalizado
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="section-title">Nuestros Servicios</div>
+      <div class="section-desc">Seleccioná un servicio para consultar directamente por presupuesto y turnos disponibles.</div>
+
+      <div class="controls">
+        <div class="search-bar">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Buscar servicios (ej. pulido, cerámico, polarizado)..."
+          />
+        </div>
+        <div class="filter-tags" id="category-filters"></div>
+      </div>
+
+      <div class="services-grid" id="services-container"></div>
+    </div>
+
+    <!-- Botón flotante de WhatsApp -->
+    <a href="#" id="float-whatsapp" class="whatsapp-float" target="_blank" title="Consultar por WhatsApp">
+      <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <footer>
+      <div class="footer-contact-info">
+        <span><i class="fa-solid fa-location-dot"></i> <strong id="footer-address">José Rosa 637</strong></span>
+        <span><i class="fa-brands fa-whatsapp"></i> <strong id="footer-phone">+54 9 2993 25-6506</strong></span>
+        <span><i class="fa-brands fa-instagram"></i> <strong id="footer-ig-text">@mons_detail_shop</strong></span>
+      </div>
+
+      <div style="margin-bottom: 1.5rem">
+        <button id="btn-open-ws">
+          <i class="fa-brands fa-whatsapp"></i> Consultar Turno por WhatsApp
+        </button>
+        <button id="btn-open-ig">
+          <i class="fa-brands fa-instagram"></i> Ver Trabajos en Instagram
+        </button>
+      </div>
+
+      <p style="font-size: 0.85rem">
+        &copy; <span id="year"></span> MONSDETAIL Shop - Daniel Barcala. Todos los derechos reservados.
+      </p>
+    </footer>
+
+    <!-- Modal Admin -->
+    <div class="modal" id="modal-admin">
+      <div class="modal-content">
+        <span class="close-btn" id="close-admin-modal">&times;</span>
+        <h2 style="color: var(--primary-lime); margin-bottom: 1rem">
+          Administración MONSDETAIL
+        </h2>
+
+        <div id="admin-login-sec">
+          <form id="form-login" onsubmit="event.preventDefault(); verifyPin();">
+            <div class="form-group">
+              <label>Ingrese PIN de Administrador:</label>
+              <input
+                type="password"
+                id="admin-pin"
+                placeholder="Escribir PIN y presionar Enter"
+              />
+            </div>
+            <button type="submit" class="submit-btn">Ingresar</button>
+          </form>
+        </div>
+
+        <div id="admin-panel-sec" style="display: none">
+          <h3>Datos del Taller</h3>
+          <div class="form-group">
+            <label>URL del Logo (Opcional):</label>
+            <input type="text" id="input-store-logo" placeholder="https://..." />
+          </div>
+          <div class="form-group">
+            <label>Subtítulo / Especialidades:</label>
+            <input type="text" id="input-store-subtitle" />
+          </div>
+          <div class="form-group">
+            <label>Dirección Física:</label>
+            <input type="text" id="input-store-address" />
+          </div>
+          <div class="form-group">
+            <label>Número WhatsApp (sin + ni espacios):</label>
+            <input type="text" id="input-store-ws" />
+          </div>
+          <div class="form-group">
+            <label>Enlace Instagram:</label>
+            <input type="text" id="input-store-ig" />
+          </div>
+          <button
+            class="submit-btn"
+            style="margin-bottom: 1.5rem"
+            id="btn-save-settings"
+          >
+            Guardar Datos del Taller
+          </button>
+
+          <hr style="border-color: var(--border-lime); margin: 1.5rem 0" />
+
+          <h3>Categorías de Servicios</h3>
+          <div class="form-group" style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+            <input type="text" id="new-category-input" placeholder="Nueva categoría" />
+            <button type="button" class="submit-btn" style="width: auto; padding: 0 1rem;" onclick="addCategory()">Añadir</button>
+          </div>
+          <div id="category-list-admin" style="margin-bottom: 1.5rem; max-height: 120px; overflow-y: auto; background: #111314; border: 1px solid var(--border-lime); padding: 0.5rem; border-radius: 6px;"></div>
+
+          <hr style="border-color: var(--border-lime); margin: 1.5rem 0" />
+
+          <h3 id="form-service-title">Agregar / Editar Servicio</h3>
+          <form
+            id="form-service"
+            onsubmit="event.preventDefault(); saveService();"
+          >
+            <input type="hidden" id="srv-id-edit" value="" />
+            <div class="form-group">
+              <label>Nombre del Servicio:</label>
+              <input type="text" id="srv-name" required />
+            </div>
+            <div class="form-group">
+              <label>Categoría:</label>
+              <select id="srv-category"></select>
+            </div>
+            <div class="form-group">
+              <label>URL Foto de Muestra:</label>
+              <input
+                type="text"
+                id="srv-img"
+                placeholder="https://ejemplo.com/foto.jpg"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label>Descripción del Trabajo:</label>
+              <textarea id="srv-desc" rows="3" required></textarea>
+            </div>
+            <div style="display: flex; gap: 0.5rem">
+              <button type="submit" class="submit-btn" id="btn-save-service">
+                Guardar Servicio
+              </button>
+              <button
+                type="button"
+                class="submit-btn"
+                id="btn-cancel-edit"
+                style="background: #555; color: #fff; display: none"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
+
+          <hr style="border-color: var(--border-lime); margin: 1.5rem 0" />
+
+          <h3>Servicios Publicados</h3>
+          <div class="admin-list" id="admin-service-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        const SUPABASE_URL = 'https://aulehttcbxrmejvtepmk.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_VQnAq1TYUwGFxr7_L9Rhug_k6L7Yz6K';
+
+        let supabaseClient = null;
+        if (typeof supabase !== 'undefined') {
+          try {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+          } catch (e) {
+            console.warn('Supabase no inicializado:', e);
+          }
+        }
+
+        let settings = {
+          logo: '',
+          subtitle: 'Lavado Premium • Limpieza de Interior • Tratamientos Cerámicos • PPF • Ploteo Vehicular',
+          address: 'José Rosa 637',
+          whatsapp: '5492993256506',
+          instagram: 'https://www.instagram.com/mons_detail_shop/',
+          pin: '200358',
+        };
+
+        let categories = [
+          'LAVADO Y INTERIOR',
+          'PULIDOS Y TRATAMIENTOS',
+          'PPF Y PLOTEO',
+          'POLARIZADOS',
+          'PRODUCTOS DE ESTÉTICA'
+        ];
+
+        let services = [
+          {
+            id: 1,
+            name: 'Lavado Premium al Detalle',
+            category: 'LAVADO Y INTERIOR',
+            image: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?auto=format&fit=crop&w=800&q=80',
+            description: 'Lavado exterior seguro con técnica de dos baldes, descontaminado férrico, limpieza profunda de llantas, pasarruedas y acondicionamiento de cubiertas.'
+          },
+          {
+            id: 2,
+            name: 'Limpieza de Interior Profunda',
+            category: 'LAVADO Y INTERIOR',
+            image: 'https://images.unsplash.com/photo-1552930294-6b595f4c2974?auto=format&fit=crop&w=800&q=80',
+            description: 'Limpieza y desinfección de tapizados (tela o cuero), alfombras, techo, paneles de puertas y nutrición de plásticos con acabado mate original.'
+          },
+          {
+            id: 3,
+            name: 'Pulido y Corrección de Barniz',
+            category: 'PULIDOS Y TRATAMIENTOS',
+            image: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=800&q=80',
+            description: 'Eliminación de marcas de lavado (swirls), rayas superficiales y hologramas para devolver el brillo espejo y profundidad al color original del vehículo.'
+          },
+          {
+            id: 4,
+            name: 'Tratamientos Cerámicos y Acrílicos',
+            category: 'PULIDOS Y TRATAMIENTOS',
+            image: 'https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=800&q=80',
+            description: 'Protección de larga duración contra rayos UV, lluvia ácida y suciedad, otorgando extrema repelencia al agua (hidrofobia) y brillo intenso.'
+          },
+          {
+            id: 5,
+            name: 'Instalación de PPF (Paint Protection Film)',
+            category: 'PPF Y PLOTEO',
+            image: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=800&q=80',
+            description: 'Película transparente de poliuretano autorregenerativa para proteger la pintura contra piedrazos, roces y rayones en zonas críticas o vehículo completo.'
+          },
+          {
+            id: 6,
+            name: 'Ploteo Vehicular Personalizado',
+            category: 'PPF Y PLOTEO',
+            image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=800&q=80',
+            description: 'Cambio de color completo o parcial (techos, espejos, detalles deportivos) con vinilos automotrices de primera calidad y terminaciones invisibles.'
+          },
+          {
+            id: 7,
+            name: 'Polarizados Automotrices',
+            category: 'POLARIZADOS',
+            image: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80',
+            description: 'Instalación de láminas de control solar y seguridad en distintas tonalidades, rechazando rayos UV y mejorando el confort térmico interior.'
+          },
+          {
+            id: 8,
+            name: 'Venta de Productos de Estética Vehicular',
+            category: 'PRODUCTOS DE ESTÉTICA',
+            image: 'https://images.unsplash.com/photo-1607860108855-64acf2078ed9?auto=format&fit=crop&w=800&q=80',
+            description: 'Asesoramiento y venta de insumos profesionales para el mantenimiento y lavado de tu vehículo en casa: shampoos, ceras, microfibras y acondicionadores.'
+          }
+        ];
+
+        let currentCategory = 'Todos';
+
+        function updateUI() {
+          const logoImg = document.getElementById('store-logo-img');
+          const textWrapper = document.getElementById('brand-text-wrapper');
+          
+          if (settings.logo && settings.logo.trim() !== '') {
+            logoImg.src = settings.logo;
+            logoImg.style.display = 'block';
+            textWrapper.style.display = 'none';
+          } else {
+            logoImg.style.display = 'none';
+            textWrapper.style.display = 'block';
+          }
+
+          document.getElementById('store-subtitle').innerText = settings.subtitle;
+          document.getElementById('footer-address').innerText = settings.address;
+          document.getElementById('footer-phone').innerText = '+' + settings.whatsapp;
+
+          const cleanWs = String(settings.whatsapp).replace(/[^0-9]/g, '');
+          const floatWs = document.getElementById('float-whatsapp');
+          if (floatWs) {
+            floatWs.href = `https://wa.me/${cleanWs}?text=` + encodeURIComponent('Hola Daniel! Vengo de la web de MONSDETAIL Shop y quiero consultar por un turno.');
+          }
+        }
+
+        function renderCategories() {
+          const filtersContainer = document.getElementById('category-filters');
+          if (filtersContainer) {
+            filtersContainer.innerHTML = `<button class="tag-btn ${currentCategory === 'Todos' ? 'active' : ''}" data-cat="Todos">Todos los Servicios</button>`;
+            categories.forEach(cat => {
+              filtersContainer.innerHTML += `<button class="tag-btn ${currentCategory === cat ? 'active' : ''}" data-cat="${cat}">${cat}</button>`;
+            });
+
+            document.querySelectorAll('.tag-btn').forEach((btn) => {
+              btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.tag-btn').forEach((b) => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentCategory = e.target.getAttribute('data-cat');
+                renderServices();
+              });
+            });
+          }
+
+          const selectSrvCat = document.getElementById('srv-category');
+          if (selectSrvCat) {
+            selectSrvCat.innerHTML = '';
+            categories.forEach(cat => {
+              selectSrvCat.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+          }
+
+          const adminCatList = document.getElementById('category-list-admin');
+          if (adminCatList) {
+            adminCatList.innerHTML = '';
+            categories.forEach(cat => {
+              adminCatList.innerHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                  <span style="font-size: 0.85rem; color: #fff;">${cat}</span>
+                  <button type="button" onclick="removeCategory('${cat}')" style="background: #e74c3c; color: #fff; border: none; padding: 0.2rem 0.5rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              `;
+            });
+          }
+        }
+
+        window.addCategory = function() {
+          const input = document.getElementById('new-category-input');
+          const val = input.value.trim().toUpperCase();
+          if (!val) return;
+          if (categories.includes(val)) {
+            alert('Esa categoría ya existe.');
+            return;
+          }
+          categories.push(val);
+          input.value = '';
+          renderCategories();
+          saveSettingsToSupabase();
+        };
+
+        window.removeCategory = function(catName) {
+          if (categories.length <= 1) {
+            alert('Debes tener al menos una categoría.');
+            return;
+          }
+          if (!confirm(`¿Eliminar la categoría "${catName}"?`)) return;
+          categories = categories.filter(c => c !== catName);
+          if (currentCategory === catName) currentCategory = 'Todos';
+          renderCategories();
+          renderServices();
+          saveSettingsToSupabase();
+        };
+
+        function openExternalUrl(url) {
+          if (!url) return;
+          let target = url.trim();
+          if (!target.startsWith('http://') && !target.startsWith('https://')) {
+            target = 'https://' + target;
+          }
+          window.open(target, '_blank');
+        }
+
+        document.getElementById('btn-open-ig').addEventListener('click', () => {
+          openExternalUrl(settings.instagram);
+        });
+
+        document.getElementById('btn-open-ws').addEventListener('click', () => {
+          const cleanWs = String(settings.whatsapp).replace(/[^0-9]/g, '');
+          const msg = encodeURIComponent('Hola Daniel! Vengo de la página web de MONSDETAIL Shop y quiero consultar por un turno / presupuesto.');
+          window.open(`https://wa.me/${cleanWs}?text=${msg}`, '_blank');
+        });
+
+        function renderServices() {
+          const container = document.getElementById('services-container');
+          const searchInput = document.getElementById('search-input');
+          const search = searchInput ? searchInput.value.toLowerCase() : '';
+
+          container.innerHTML = '';
+
+          const filtered = services.filter((s) => {
+            const matchesCat = currentCategory === 'Todos' || s.category === currentCategory;
+            const matchesSearch =
+              s.name.toLowerCase().includes(search) ||
+              (s.description && s.description.toLowerCase().includes(search));
+            return matchesCat && matchesSearch;
+          });
+
+          if (filtered.length === 0) {
+            container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem;">No se encontraron servicios en esta categoría.</p>`;
+          } else {
+            const cleanWs = String(settings.whatsapp).replace(/[^0-9]/g, '');
+
+            filtered.forEach((s) => {
+              const message = encodeURIComponent(
+                `Hola Daniel! Vi en la web de MONSDETAIL Shop el servicio de *${s.name}* y me gustaría pedir presupuesto para mi vehículo.`
+              );
+              const wsLink = `https://wa.me/${cleanWs}?text=${message}`;
+
+              container.innerHTML += `
+                <div class="service-card">
+                  <img src="${s.image}" class="service-img" alt="${s.name}">
+                  <div class="service-info">
+                    <div class="service-category">${s.category}</div>
+                    <div class="service-title">${s.name}</div>
+                    <div class="service-desc">${s.description || ''}</div>
+                    <button onclick="window.open('${wsLink}', '_blank')" class="quote-btn">
+                      <i class="fa-brands fa-whatsapp"></i> Pedir Presupuesto
+                    </button>
+                  </div>
+                </div>
+              `;
+            });
+          }
+
+          renderAdminServiceList();
+        }
+
+        function renderAdminServiceList() {
+          const adminList = document.getElementById('admin-service-list');
+          if (!adminList) return;
+
+          adminList.innerHTML = '';
+          if (services.length === 0) {
+            adminList.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 0.5rem;">Sin servicios publicados.</p>`;
+            return;
+          }
+
+          services.forEach((s) => {
+            adminList.innerHTML += `
+              <div class="admin-item">
+                <div class="admin-item-info">
+                  <img src="${s.image}" class="admin-item-img" alt="${s.name}">
+                  <div>
+                    <strong style="color: #fff; font-size: 0.85rem;">${s.name}</strong><br>
+                    <small style="color: var(--primary-lime);">${s.category}</small>
+                  </div>
+                </div>
+                <div class="admin-actions">
+                  <button class="btn-edit-sm" onclick="editService('${s.id}')"><i class="fa-solid fa-pen"></i></button>
+                  <button class="btn-delete-sm" onclick="deleteService('${s.id}')"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+        window.editService = function (id) {
+          const srv = services.find((s) => String(s.id) === String(id));
+          if (!srv) return;
+
+          document.getElementById('srv-id-edit').value = srv.id;
+          document.getElementById('srv-name').value = srv.name;
+          document.getElementById('srv-category').value = srv.category;
+          document.getElementById('srv-img').value = srv.image;
+          document.getElementById('srv-desc').value = srv.description || '';
+
+          document.getElementById('form-service-title').innerText = 'Modificar Servicio';
+          document.getElementById('btn-save-service').innerText = 'Actualizar Servicio';
+          document.getElementById('btn-cancel-edit').style.display = 'block';
+        };
+
+        window.deleteService = async function (id) {
+          if (!confirm('¿Estás seguro de eliminar este servicio?')) return;
+
+          if (supabaseClient) {
+            const { error } = await supabaseClient.from('services').delete().eq('id', id);
+            if (error) {
+              alert('Error al eliminar en Supabase: ' + error.message);
+              return;
+            }
+          }
+
+          services = services.filter((s) => String(s.id) !== String(id));
+          alert('Servicio eliminado.');
+          renderServices();
+        };
+
+        document.getElementById('btn-cancel-edit').addEventListener('click', () => {
+          resetForm();
+        });
+
+        function resetForm() {
+          document.getElementById('srv-id-edit').value = '';
+          document.getElementById('srv-name').value = '';
+          document.getElementById('srv-img').value = '';
+          document.getElementById('srv-desc').value = '';
+
+          document.getElementById('form-service-title').innerText = 'Agregar / Editar Servicio';
+          document.getElementById('btn-save-service').innerText = 'Guardar Servicio';
+          document.getElementById('btn-cancel-edit').style.display = 'none';
+        }
+
+        document.getElementById('btn-admin-modal').addEventListener('click', () => {
+          document.getElementById('modal-admin').classList.add('active');
+          document.getElementById('admin-pin').focus();
+        });
+
+        document.getElementById('close-admin-modal').addEventListener('click', () => {
+          document.getElementById('modal-admin').classList.remove('active');
+          document.getElementById('admin-pin').value = '';
+          resetForm();
+        });
+
+        window.verifyPin = function () {
+          const pinInput = document.getElementById('admin-pin').value;
+          if (pinInput === settings.pin) {
+            document.getElementById('admin-login-sec').style.display = 'none';
+            document.getElementById('admin-panel-sec').style.display = 'block';
+
+            document.getElementById('input-store-logo').value = settings.logo || '';
+            document.getElementById('input-store-subtitle').value = settings.subtitle;
+            document.getElementById('input-store-address').value = settings.address;
+            document.getElementById('input-store-ws').value = settings.whatsapp;
+            document.getElementById('input-store-ig').value = settings.instagram;
+            renderCategories();
+          } else {
+            alert('PIN incorrecto.');
+          }
+        };
+
+        async function saveSettingsToSupabase() {
+          if (supabaseClient) {
+            await supabaseClient.from('store_settings').upsert({
+              id: 'default',
+              logo: settings.logo,
+              subtitle: settings.subtitle,
+              address: settings.address,
+              whatsapp: settings.whatsapp,
+              instagram: settings.instagram,
+              pin: settings.pin,
+              categories: categories,
+              updated_at: new Date(),
+            });
+          }
+        }
+
+        document.getElementById('btn-save-settings').addEventListener('click', async () => {
+          settings.logo = document.getElementById('input-store-logo').value;
+          settings.subtitle = document.getElementById('input-store-subtitle').value;
+          settings.address = document.getElementById('input-store-address').value;
+          settings.whatsapp = document.getElementById('input-store-ws').value;
+          settings.instagram = document.getElementById('input-store-ig').value;
+
+          await saveSettingsToSupabase();
+
+          alert('¡Datos actualizados correctamente!');
+          updateUI();
+          document.getElementById('modal-admin').classList.remove('active');
+        });
+
+        window.saveService = async function () {
+          const editId = document.getElementById('srv-id-edit').value;
+          const name = document.getElementById('srv-name').value;
+          const category = document.getElementById('srv-category').value;
+          const image = document.getElementById('srv-img').value;
+          const description = document.getElementById('srv-desc').value;
+
+          if (!name || !image || !description) {
+            alert('Completa todos los campos del servicio.');
+            return;
+          }
+
+          if (editId) {
+            if (supabaseClient) {
+              const { error } = await supabaseClient
+                .from('services')
+                .update({ name, category, image, description })
+                .eq('id', editId);
+              if (error) {
+                alert('Error al actualizar: ' + error.message);
+                return;
+              }
+            } else {
+              const index = services.findIndex((s) => String(s.id) === String(editId));
+              if (index !== -1) {
+                services[index] = { id: editId, name, category, image, description };
+              }
+            }
+            alert('¡Servicio actualizado!');
+          } else {
+            if (supabaseClient) {
+              const { error } = await supabaseClient
+                .from('services')
+                .insert([{ name, category, image, description }]);
+              if (error) {
+                alert('Error al guardar: ' + error.message);
+                return;
+              }
+            } else {
+              const newId = services.length > 0 ? Math.max(...services.map(s => Number(s.id))) + 1 : 1;
+              services.push({ id: newId, name, category, image, description });
+            }
+            alert('¡Servicio agregado!');
+          }
+
+          resetForm();
+          if (supabaseClient) {
+            syncSupabase();
+          } else {
+            renderServices();
+          }
+        };
+
+        document.getElementById('search-input').addEventListener('input', renderServices);
+
+        async function syncSupabase() {
+          if (supabaseClient) {
+            try {
+              const { data: sData } = await supabaseClient
+                .from('store_settings')
+                .select('*')
+                .eq('id', 'default')
+                .single();
+
+              if (sData) {
+                settings = { ...settings, ...sData };
+                if (sData.categories && Array.isArray(sData.categories)) {
+                  categories = sData.categories;
+                }
+              }
+              updateUI();
+              renderCategories();
+
+              const { data: srvData } = await supabaseClient
+                .from('services')
+                .select('*')
+                .order('id', { ascending: true });
+
+              if (srvData && srvData.length > 0) services = srvData;
+            } catch (e) {
+              console.warn('Error al sincronizar Supabase:', e);
+            }
+          }
+          renderCategories();
+          renderServices();
+        }
+
+        updateUI();
+        syncSupabase();
+      });
+    </script>
+  </body>
+</html>

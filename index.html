@@ -46,7 +46,7 @@
       header {
         background: linear-gradient(135deg, #0d0e0f 0%, #1d2022 100%);
         border-bottom: 3px solid var(--primary-lime);
-        padding: 2.5rem 1rem;
+        padding: 2rem 1rem;
         text-align: center;
         position: relative;
         display: flex;
@@ -85,12 +85,14 @@
         padding-top: 2px;
       }
 
+      /* Estilo para la imagen del logo oficial */
       .brand-logo-img {
-        max-width: 280px;
-        width: 100%;
+        max-width: 360px;
+        width: 90%;
         height: auto;
         object-fit: contain;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem;
+        border-radius: 8px;
         display: none;
       }
 
@@ -280,7 +282,6 @@
         box-shadow: 0 8px 20px rgba(164, 214, 44, 0.12);
       }
 
-      /* Carrusel de fotos */
       .carousel-container {
         position: relative;
         width: 100%;
@@ -604,8 +605,10 @@
         <i class="fa-solid fa-gear"></i> Panel Admin
       </button>
 
+      <!-- Imagen del Logo Oficial -->
       <img src="" alt="MONSDETAIL Shop" class="brand-logo-img" id="store-logo-img" />
 
+      <!-- Logo tipográfico de respaldo si no hay imagen -->
       <div id="brand-text-wrapper">
         <h1 class="brand-logo-text">
           <span class="mons">MONS</span><span class="detail">DETAIL</span>
@@ -702,7 +705,15 @@
         </div>
 
         <div id="admin-panel-sec" style="display: none">
-          <h3>Datos del Taller</h3>
+          <h3>Datos y Logo del Taller</h3>
+          <div class="form-group">
+            <label>Subir Imagen del Logo (Desde compu o celular):</label>
+            <input type="file" id="input-logo-file" accept="image/*" />
+          </div>
+          <div class="form-group">
+            <label>O URL Directa del Logo:</label>
+            <input type="text" id="input-store-logo" placeholder="https://..." />
+          </div>
           <div class="form-group">
             <label>Subtítulo / Especialidades:</label>
             <input type="text" id="input-store-subtitle" />
@@ -724,7 +735,7 @@
             style="margin-bottom: 1.5rem"
             id="btn-save-settings"
           >
-            Guardar Datos del Taller
+            Guardar Datos y Logo
           </button>
 
           <hr style="border-color: var(--border-lime); margin: 1.5rem 0" />
@@ -753,7 +764,6 @@
               <select id="srv-category"></select>
             </div>
             
-            <!-- SELECTORES DE ARCHIVOS DIRECTOS DE LA PC / CELULAR (HASTA 5) -->
             <div class="form-group">
               <label>Foto 1 (Principal):</label>
               <input type="file" id="srv-file-1" accept="image/*" />
@@ -839,6 +849,18 @@
         let currentCategory = 'Todos';
 
         function updateUI() {
+          const logoImg = document.getElementById('store-logo-img');
+          const textWrapper = document.getElementById('brand-text-wrapper');
+          
+          if (settings.logo && settings.logo.trim() !== '') {
+            logoImg.src = settings.logo;
+            logoImg.style.display = 'block';
+            textWrapper.style.display = 'none';
+          } else {
+            logoImg.style.display = 'none';
+            textWrapper.style.display = 'block';
+          }
+
           document.getElementById('store-subtitle').innerText = settings.subtitle;
           document.getElementById('footer-address').innerText = settings.address;
           document.getElementById('footer-phone').innerText = '+' + settings.whatsapp;
@@ -1083,7 +1105,6 @@
           document.getElementById('srv-category').value = srv.category;
           document.getElementById('srv-desc').value = srv.description || '';
 
-          // Limpiar inputs de archivos al editar
           for (let i = 1; i <= 5; i++) {
             document.getElementById(`srv-file-${i}`).value = '';
           }
@@ -1143,6 +1164,8 @@
             document.getElementById('admin-login-sec').style.display = 'none';
             document.getElementById('admin-panel-sec').style.display = 'block';
 
+            document.getElementById('input-logo-file').value = '';
+            document.getElementById('input-store-logo').value = settings.logo || '';
             document.getElementById('input-store-subtitle').value = settings.subtitle;
             document.getElementById('input-store-address').value = settings.address;
             document.getElementById('input-store-ws').value = settings.whatsapp;
@@ -1157,6 +1180,7 @@
           if (supabaseClient) {
             await supabaseClient.from('store_settings').upsert({
               id: 'default',
+              logo: settings.logo,
               subtitle: settings.subtitle,
               address: settings.address,
               whatsapp: settings.whatsapp,
@@ -1169,6 +1193,35 @@
         }
 
         document.getElementById('btn-save-settings').addEventListener('click', async () => {
+          const logoFileInput = document.getElementById('input-logo-file');
+          let newLogoUrl = document.getElementById('input-store-logo').value.trim();
+
+          // Si seleccionó un archivo nuevo para el logo, subirlo a Supabase Storage
+          if (logoFileInput && logoFileInput.files.length > 0 && supabaseClient) {
+            const file = logoFileInput.files[0];
+            const fileExt = file.name.split('.').pop();
+            const fileName = `logo_${Date.now()}.${fileExt}`;
+            const filePath = `logos/${fileName}`;
+
+            const { error: uploadError } = await supabaseClient.storage
+              .from('servicios-fotos')
+              .upload(filePath, file);
+
+            if (uploadError) {
+              alert('Error al subir el logo: ' + uploadError.message);
+              return;
+            }
+
+            const { data: publicURLData } = supabaseClient.storage
+              .from('servicios-fotos')
+              .getPublicUrl(filePath);
+
+            if (publicURLData && publicURLData.publicUrl) {
+              newLogoUrl = publicURLData.publicUrl;
+            }
+          }
+
+          settings.logo = newLogoUrl;
           settings.subtitle = document.getElementById('input-store-subtitle').value;
           settings.address = document.getElementById('input-store-address').value;
           settings.whatsapp = document.getElementById('input-store-ws').value;
@@ -1176,7 +1229,7 @@
 
           await saveSettingsToSupabase();
 
-          alert('¡Datos actualizados correctamente!');
+          alert('¡Datos y logo actualizados correctamente!');
           updateUI();
           document.getElementById('modal-admin').classList.remove('active');
         });
@@ -1192,7 +1245,6 @@
             return;
           }
 
-          // Subir archivos seleccionados a Supabase Storage
           let finalImages = [];
           if (editId) {
             const existingSrv = services.find(s => String(s.id) === String(editId));
@@ -1219,16 +1271,15 @@
                   return;
                 }
 
-                // Obtener URL pública de la imagen subida
                 const { data: publicURLData } = supabaseClient.storage
                   .from('servicios-fotos')
                   .getPublicUrl(filePath);
 
                 if (publicURLData && publicURLData.publicUrl) {
                   if (editId && finalImages[i - 1]) {
-                    finalImages[i - 1] = publicURLData.publicUrl; // Reemplazar si ya existía
+                    finalImages[i - 1] = publicURLData.publicUrl;
                   } else {
-                    finalImages.push(publicURLData.publicUrl); // Agregar nueva
+                    finalImages.push(publicURLData.publicUrl);
                   }
                 }
               }
